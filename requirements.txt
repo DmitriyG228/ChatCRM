@@ -1,0 +1,27 @@
+# --- ChatCRM Requirements ---
+# STATUS: Design Phase Placeholder - Dependencies not finalized!
+# Add actual dependencies as the fastMCP agent and other components are built.
+
+# Example potential dependencies (uncomment and specify versions as needed):
+
+# Core web framework for fastMCP agent
+# fastapi==0.1xx.x
+# uvicorn[standard]==0.2x.x
+
+# Database interaction (PostgreSQL)
+# sqlalchemy==2.0.x
+# psycopg2-binary==2.9.x # Or asyncpg for async
+# alembic==1.1x.x # For database migrations
+
+# Vector Database client (Qdrant)
+# qdrant-client==1.8.x
+
+# LLM SDKs (choose based on supported models)
+# openai==1.x.x
+# anthropic==0.2x.x
+# langchain==0.x.x # Or similar orchestration library
+
+# Other potential utilities
+# pydantic==2.x.x
+# python-dotenv==1.0.x
+# requests==2.3x.x 

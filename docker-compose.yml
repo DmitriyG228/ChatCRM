@@ -1,0 +1,95 @@
+
+# --- ChatCRM Docker Compose ---
+# STATUS: Design Phase Placeholder - Specs not finalized!
+# This configuration is illustrative and will change.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: chatcrm_postgres
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432" # Expose standard Postgres port
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-chatcrm_db}
+      POSTGRES_USER: ${POSTGRES_USER:-chatcrm_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme_in_prod}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: chatcrm_qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333" # Standard Qdrant gRPC port
+      - "6334:6334" # Standard Qdrant REST port
+    volumes:
+      - qdrant_data:/qdrant/storage
+    # environment: # Add Qdrant specific config if needed (e.g., API keys)
+    #   QDRANT_API_KEY: ${QDRANT_API_KEY:-}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:6333/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  fastmcp_agent:
+    # image: your-registry/fastmcp-agent:latest # Replace with actual image later
+    build:
+      context: ./fastmcp # Assuming the Dockerfile is in a 'fastmcp' subdir
+      dockerfile: Dockerfile # Placeholder
+    container_name: chatcrm_fastmcp
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+    ports:
+      - "8000:8000" # Example port for the agent server API
+    environment:
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-chatcrm_user}:${POSTGRES_PASSWORD:-changeme_in_prod}@postgres:5432/${POSTGRES_DB:-chatcrm_db}"
+      QDRANT_HOST: "qdrant"
+      QDRANT_PORT: "6333"
+      # Add other necessary env vars: LLM keys, email gateway details, etc.
+      # OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      # ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    # volumes: # Mount code if needed during development
+    #   - ./fastmcp:/app
+
+  librechat_ui:
+    # image: your-registry/librechat-custom:latest # Replace with actual image/build later
+    # Or use a standard LibreChat image if applicable:
+    image: ghcr.io/danny-avila/librechat:latest # Example - check compatibility later
+    container_name: chatcrm_librechat_ui
+    restart: unless-stopped
+    depends_on:
+      - fastmcp_agent # Depends on the agent server being available
+    ports:
+      - "3080:3080" # Default LibreChat port
+    environment:
+      # Configure LibreChat to talk to fastMCP Agent Server
+      # This will depend heavily on how LibreChat integrates custom backends.
+      # Placeholder - likely needs more specific env vars.
+      BACKEND_API_URL: "http://fastmcp_agent:8000/api" # Example endpoint
+      # Pass necessary keys or config if LibreChat handles them directly
+      # OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      # ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+
+volumes:
+  postgres_data:
+  qdrant_data:
+
+# --- Network (Optional) ---
+# networks:
+#   chatcrm_net:
+#     driver: bridge
+
+# Note: Add network configuration to services if using a custom network.
+# e.g., networks: [chatcrm_net] under each service. 
