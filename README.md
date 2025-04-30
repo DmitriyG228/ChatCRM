@@ -1,6 +1,5 @@
 # 🗣️ ChatCRM — **AI‑native, talk‑powered CRM**
 
-![ChatCRM banner](./docs/banner.png)
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE) ![stage](https://img.shields.io/badge/stage-design%20jam-yellow) ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 
@@ -17,8 +16,6 @@
 | **Bring your own LLM** | OpenAI, Claude, Ollama, LM‑Studio – your key, your choice |
 | **Self‑host in one command** | `docker compose up -d` spins Postgres, Qdrant, fastMCP, LibreChat |
 | **Privacy‑first by design** | All data stays on your box; MIT license means no strings attached |
-
-<img src="./docs/ui-mock.png" alt="UI mock" width="640">
 
 ---
 
@@ -73,13 +70,6 @@ Early contributors (before May 12) get:
 
 ---
 
-## 📚 Inspiration & Reference Reading
-
-* ReAct — Synergizing Reasoning & Acting (Yao et al., 2022)  
-* RAG 2.0 — Retrieval‑Augmented Generation for Complex Tasks (Lewis et al., 2024)  
-* Designing Data‑Intensive Apps — Event Sourcing chapter (Kleppmann, 2017)
-
----
 
 Made with o3, gemini-2.5-pro-exp and unabashed open‑source optimism.
 
